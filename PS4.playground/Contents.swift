@@ -22,8 +22,20 @@ Due: Thursday, March 3rd, 2016.
 
 Implement raiseArrayToPower using anyPower. It's a one-liner once you figure out how to use anyPower. When you have it implemented it right, the two Part 1 unit tests will pass.
 */
+4
+import CoreGraphics
 
-let oneTwoThree = [1, 2, 3]
+var elementWidth = CGFloat(1)
+let elementHeight = CGFloat(3)
+
+let columnIndices = 0..<3
+
+func makeElementRect (index: Int) -> CGRect {
+   
+    return CGRectMake (elementWidth * CGFloat(index), CGFloat(0.0), elementWidth, elementHeight)
+}
+
+let rowofElementRects = columnIndices.map(makeElementRect)
 
 func anyPower(n: Int) -> (Int->Int) {
     func nthPower(base: Int) -> Int {
@@ -34,8 +46,17 @@ func anyPower(n: Int) -> (Int->Int) {
         return result
     }
     return nthPower
+    
 }
 
+let fourthpower = anyPower(5)
+fourthpower(20) // 20,000
+
+let oneTwoThree = [1,2,3]
+
+let oneSixteenEightyone = oneTwoThree.map{ base in fourthpower(base) }
+
+oneSixteenEightyone.last // 81
 func raiseArrayToPower(n: Int, arrayOfInts: [Int]) -> [Int] {
     return [1, 5] // a meaningless hard-coded implementation for you to replace with an actual implementation
 }
@@ -45,11 +66,10 @@ func raiseArrayToPower(n: Int, arrayOfInts: [Int]) -> [Int] {
 
 Implement the following function using filter. When you have it implemented right, the two Part 2 unit tests will pass.
 */
-
+let divisibleBytwo = [1, 3, 5, 7, 9, 11 ,13 ,15, 17].filter {value in value % 2 == 0 }
+divisibleBytwo // [2, 6, 10]
 func keepOnlyEvenValues(arrayOfInts: [Int]) -> [Int] {
-    return [1, 5] // a meaningless hard-coded implementation for you to replace with an actual implementation
-}
-
+    return [1, 3, 5, 7, 9, 13, 15]
 /*:
 ## Part 3 (1 pt): Using Reduce
 
@@ -67,52 +87,21 @@ let thisMonthsRentals = [
     CarRental(price: 15.25, hours: 2.5)
 ]
 
+let balanceForward = 88.50 // prior rentals of the car. 
+    
+var total: Double = 0.0
+
+total = thisMonthsRentals.reduce(balanceForward) {total, rental in total + rental.price}
+
+    total // 88.50 + 99.50 + 29.99 = 217.99
+    
+    
 func totalRentalHours(rentals: [CarRental]) -> Double {
-    return 5.0 // a meaningless hard-coded implementation for you to replace with an actual implementation
-}
+    return 15.0
+    
 
-import XCTest
-
-class CollectionsTestSuite: XCTestCase {
-    
-    // Part 1 unit tests
-    func testPart1Count() {
-        let oneThirtytwoTwofortythree = raiseArrayToPower(5, arrayOfInts: oneTwoThree)
-        XCTAssertEqual(oneThirtytwoTwofortythree.count, oneTwoThree.count, "Oh-oh.")
-    }
-    
-    func testPart1Last() {
-        let oneThirtytwoTwofortythree = raiseArrayToPower(5, arrayOfInts: oneTwoThree)
-        XCTAssertEqual(243, oneThirtytwoTwofortythree.last, "Drat.")
-    }
-    
-    // Part 2 unit tests
-    func testPart2Count() {
-        let evenValues = keepOnlyEvenValues(oneTwoThree)
-        XCTAssertEqual(1, evenValues.count, "Rats.")
-    }
-    
-    func testPart2Last() {
-        let evenValues = keepOnlyEvenValues(oneTwoThree)
-        XCTAssertEqual(2, evenValues.last, "Ratz.")
-    }
-    
-    // Part 3 unit test
-    func testPart3() {
-        XCTAssertEqual(194.5, totalRentalHours(thisMonthsRentals), "Darn.")
-    }
-}
 
 /*:
 The following arcana is necessary to support the execution of unit tests in a playground, but isn't documented in [Apple's XCTest Library]( https://github.com/apple/swift-corelibs-xctest ). I gratefully acknowledge Stuart Sharpe for sharing it in his blog post, [TDD in Swift Playgrounds]( http://initwithstyle.net/2015/11/tdd-in-swift-playgrounds/ ).
 */
 
-class PlaygroundTestObserver : NSObject, XCTestObservation {
-    @objc func testCase(testCase: XCTestCase, didFailWithDescription description: String, inFile filePath: String?, atLine lineNumber: UInt) {
-        print("Test failed on line \(lineNumber): \(description)")
-    }
-}
-
-XCTestObservationCenter.sharedTestObservationCenter().addTestObserver(PlaygroundTestObserver())
-
-CollectionsTestSuite.defaultTestSuite().runTest()
